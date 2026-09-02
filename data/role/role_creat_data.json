@@ -1,0 +1,105 @@
+{
+  "success_cases": [
+    {
+      "name": "最小必填字段新增角色成功",
+      "overrides": {}
+    },
+    {
+      "name": "菜单权限多选新增角色成功",
+      "overrides": {
+        "menuIds": [
+          1,
+          2,
+          3,
+          100
+        ]
+      }
+    }
+  ],
+  "fail_code_cases": [
+    {
+      "name": "角色名称为空",
+      "overrides": {
+        "roleName": ""
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "权限字符为空",
+      "overrides": {
+        "roleKey": ""
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "显示顺序缺失",
+      "overrides": {
+        "roleSort": null
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "重复角色名称",
+      "overrides": {
+        "roleName": "超级管理员"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "重复权限字符",
+      "overrides": {
+        "roleKey": "admin"
+      },
+      "expected_code": 500
+    }
+  ],
+  "fail_status_cases": [
+    {
+      "name": "显示顺序传非数字",
+      "overrides": {
+        "roleSort": "abc"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "数据权限范围传非法值",
+      "overrides": {
+        "dataScope": "9"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "状态传非法值",
+      "overrides": {
+        "status": "2"
+      },
+      "expected_status": 422
+    }
+  ],
+  "defect_cases": [
+    {
+      "name": "显示顺序超INT上限",
+      "overrides": {
+        "roleSort": 9999999999
+      },
+      "expected_code": 601,
+      "defect_desc": "显示顺序传9999999999超出MySQL INT上限，后端未做范围校验返回500并泄漏SQL，正常应返回601"
+    },
+    {
+      "name": "角色名称含脚本",
+      "overrides": {
+        "roleName": "<script>x</script>"
+      },
+      "expected_code": 601,
+      "defect_desc": "角色名称含<script>无Xss校验竟创建成功（userName有Xss而roleName没有），正常应拒绝"
+    },
+    {
+      "name": "权限字符含脚本",
+      "overrides": {
+        "roleKey": "<script>alert(1)</script>"
+      },
+      "expected_code": 601,
+      "defect_desc": "权限字符含<script>无Xss校验竟创建成功，正常应拒绝"
+    }
+  ]
+}

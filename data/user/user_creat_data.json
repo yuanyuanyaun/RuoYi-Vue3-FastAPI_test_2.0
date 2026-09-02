@@ -1,0 +1,249 @@
+{
+  "success_cases": [
+    {
+      "name": "用户名30字符边界通过",
+      "payload": {
+        "userName": "1234567890123456789012345678@a",
+        "nickName": "边界",
+        "password": "Test@123456"
+      },
+      "expected_code": 200
+    },
+    {
+      "name": "密码6位边界通过",
+      "payload": {
+        "userName": "add_pwd6",
+        "nickName": "密码6位",
+        "password": "1234a@"
+      },
+      "expected_code": 200
+    },
+    {
+      "name": "密码20位边界通过",
+      "payload": {
+        "userName": "add_pwd20",
+        "nickName": "密码20位",
+        "password": "12345678901234567890"
+      },
+      "expected_code": 200
+    },
+    {
+      "name": "手机号11位边界通过",
+      "payload": {
+        "userName": "add_phone11",
+        "nickName": "手机号11",
+        "password": "Test@123456",
+        "phonenumber": "12345678901"
+      },
+      "expected_code": 200
+    },
+    {
+      "name": "邮箱50位边界通过",
+      "payload": {
+        "userName": "add_email50",
+        "nickName": "邮箱50",
+        "password": "Test@123456",
+        "email": "123456789012345678901234567890123456789012a@qq.com"
+      },
+      "expected_code": 200
+    }
+  ],
+  "fail_code_cases": [
+    {
+      "name": "用户名31字符",
+      "payload": {
+        "userName": "123456789012345678901234567890a",
+        "nickName": "超长",
+        "password": "Test@123456"
+      },
+      "expected_code": 601
+    },
+    {
+            "name": "用户名含脚本",
+      "payload": {
+        "userName":"<script>x</script>test",
+        "nickName": "用户名约束",
+        "password": "Test@123456"
+      },
+      "expected_code": 601
+    },
+        {
+            "name": "昵称含脚本",
+      "payload": {
+        "userName":"test",
+        "nickName": "<script>y</script>test",
+        "password": "Test@123456"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "用户名为空",
+      "payload": {
+        "userName": "",
+        "nickName": "空名",
+        "password": "Test@123456"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "密码5位",
+      "payload": {
+        "userName": "fail_pwd5",
+        "nickName": "密码5位",
+        "password": "12345"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "密码21位",
+      "payload": {
+        "userName": "fail_pwd21",
+        "nickName": "密码21位",
+        "password": "123456789012345678901"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "密码为空",
+      "payload": {
+        "userName": "fail_pwd0",
+        "nickName": "密码空",
+        "password": ""
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "密码含非法字符",
+      "payload": {
+        "userName": "fail_pwdchar",
+        "nickName": "非法字符",
+        "password": "123456<"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "邮箱格式不对",
+      "payload": {
+        "userName": "fail_email",
+        "nickName": "邮箱错",
+        "password": "Test@123456",
+        "email": "not_an_email"
+      },
+      "expected_code": 601
+    },
+        {
+      "name": "重复邮箱号",
+      "payload": {
+        "userName": "fail_emailup",
+        "nickName": "重复邮箱号",
+        "password": "Test@123456",
+        "email": "niangao@qq.com"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "邮箱51字符",
+      "payload": {
+        "userName": "fail_email51",
+        "nickName": "邮箱长",
+        "password": "Test@123456",
+        "email": "1234567890123456789012345678901234567890123a@qq.com"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "昵称31字符",
+      "payload": {
+        "userName": "fail_nick31",
+        "nickName": "123456789012345678901234567890b",
+        "password": "Test@123456"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "重复用户名",
+      "payload": {
+        "userName": "niangao",
+        "nickName": "重复",
+        "password": "Test@123456"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "重复手机号",
+      "payload": {
+        "userName": "fail_phonedup",
+        "nickName": "重复电话",
+        "password": "Test@123456",
+        "phonenumber": "15888888888"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "手机号12字符过长",
+      "payload": {
+        "userName": "fail_phone12",
+        "nickName": "电话过长",
+        "password": "Test@123456",
+        "phonenumber": "123456789012"
+      },
+      "expected_code": 601
+    }
+  ],
+  "fail_status_cases": [
+    {
+      "name": "性别特殊值",
+      "payload": {
+        "userName": "fail_sex",
+        "nickName": "性别",
+        "password": "Test@123456",
+        "sex": "1.5"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "状态特殊值",
+      "payload": {
+        "userName": "fail_status",
+        "nickName": "状态",
+        "password": "Test@123456",
+        "status": "abc"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "部门特殊值",
+      "payload": {
+        "userName": "fail_dept",
+        "nickName": "部门",
+        "password": "Test@123456",
+        "deptId": "@"
+      },
+      "expected_status": 422
+    }
+  ],
+  "defect_cases": [
+    {
+      "name": "手机号传字母",
+      "payload": {
+        "userName": "defect_phoneabc",
+        "nickName": "带字母电话",
+        "password": "Test@123456",
+        "phonenumber": "1234567890a"
+      },
+      "expected_code": 601,
+      "defect_desc": "手机号传字母竟创建成功，正常应校验11位数字格式并拒绝"
+    },
+    {
+      "name": "手机号仅5位",
+      "payload": {
+        "userName": "defect_phone5",
+        "nickName": "短电话",
+        "password": "Test@123456",
+        "phonenumber": "1234567890"
+      },
+      "expected_code": 601,
+      "defect_desc": "手机号10位竟创建成功，正常应校验为11位数字并拒绝"
+    }
+  ]
+}

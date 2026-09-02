@@ -1,0 +1,72 @@
+{
+  "fail_code_cases": [
+    {
+      "name": "添加菜单缺菜单名称",
+      "overrides": {
+        "menuName": null
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加菜单缺显示顺序",
+      "overrides": {
+        "orderNum": null
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加菜单缺菜单类型",
+      "overrides": {
+        "menuType": null
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加菜单菜单名称重复",
+      "overrides": {
+        "menuName": "系统管理",
+        "menuType": "M"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "添加菜单同级路由地址重复",
+      "overrides": {
+        "parentId": 1,
+        "path": "user"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "添加外链菜单地址非http开头",
+      "overrides": {
+        "isFrame": 0,
+        "path": "abc"
+      },
+      "expected_code": 500
+    }
+  ],
+  "fail_status_cases": [
+    {
+      "name": "添加菜单菜单类型传非法值",
+      "overrides": {
+        "menuType": "X"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "添加菜单显示顺序传非数字",
+      "overrides": {
+        "orderNum": "abc"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "添加菜单外链标识传非数字",
+      "overrides": {
+        "isFrame": "abc"
+      },
+      "expected_status": 422
+    }
+  ]
+}

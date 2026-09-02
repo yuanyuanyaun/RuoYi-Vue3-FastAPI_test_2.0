@@ -1,0 +1,4 @@
+requests>=2.31
+pytest>=8.0
+allure-pytest>=2.13
+python-dotenv>=1.0

@@ -1,0 +1,116 @@
+{
+  "success_cases": [
+    {
+      "name": "最小必填字段添加岗位成功",
+      "overrides": {},
+      "expected_code": 200
+    }
+  ],
+  "fail_code_cases": [
+    {
+      "name": "添加岗位缺岗位编码",
+      "overrides": {
+        "postCode": null,
+        "postName": "岗位_缺编码",
+        "postSort": 1,
+        "status": "0"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加岗位缺岗位名称",
+      "overrides": {
+        "postCode": "code_缺名称",
+        "postName": null,
+        "postSort": 1,
+        "status": "0"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加岗位缺显示顺序",
+      "overrides": {
+        "postCode": "code_缺排序",
+        "postName": "岗位_缺排序",
+        "postSort": null,
+        "status": "0"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加岗位岗位名称重复",
+      "overrides": {
+        "postCode": "code_重名",
+        "postName": "董事长",
+        "postSort": 1,
+        "status": "0"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "添加岗位岗位编码重复",
+      "overrides": {
+        "postCode": "ceo",
+        "postName": "岗位_重码",
+        "postSort": 1,
+        "status": "0"
+      },
+      "expected_code": 500
+    }
+  ],
+  "fail_status_cases": [
+    {
+      "name": "添加岗位状态传非法值",
+      "overrides": {
+        "postCode": "code_状态非法",
+        "postName": "岗位_状态非法",
+        "postSort": 1,
+        "status": "abc"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "添加岗位显示顺序传非数字",
+      "overrides": {
+        "postCode": "code_排序非数字",
+        "postName": "岗位_排序非数字",
+        "postSort": "abc",
+        "status": "0"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "添加岗位显示顺序传小数",
+      "overrides": {
+        "postCode": "code_排序小数",
+        "postName": "岗位_排序小数",
+        "postSort": 1.5,
+        "status": "0"
+      },
+      "expected_status": 422
+    }
+  ],
+  "defect_cases": [
+    {
+      "name": "添加岗位缺状态",
+      "defect_desc": "缺status时后端未做必填校验，数据库NOT NULL且无默认值，返回500并泄漏SQL/表结构",
+      "overrides": {
+        "postCode": "code_缺状态",
+        "postName": "岗位_缺状态",
+        "postSort": 1
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加岗位显示顺序超过整数范围",
+      "defect_desc": "postSort超过数据库Integer范围时后端未做范围校验，返回500并泄漏SQL/表结构",
+      "overrides": {
+        "postCode": "code_超范围",
+        "postName": "岗位_超范围",
+        "postSort": 2147483648,
+        "status": "0"
+      },
+      "expected_code": 601
+    }
+  ]
+}

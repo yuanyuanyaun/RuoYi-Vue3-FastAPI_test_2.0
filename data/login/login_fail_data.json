@@ -1,0 +1,44 @@
+{
+  "login_fail_cases_code": [
+    {
+      "name": "密码错误登录失败",
+      "payload": {
+        "username": "admin",
+        "password": "wrong_password"
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "用户不存在登录失败",
+      "payload": {
+        "username": "ghost_user_20260824",
+        "password": "admin123"
+      },
+      "expected_code": 601
+    }
+  ],
+  "login_fail_cases_status": [
+    {
+      "name": "密码为空字符串",
+      "payload": {
+        "username": "admin",
+        "password": ""
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "缺少密码参数",
+      "payload": {
+        "username": "admin"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "缺少用户名参数",
+      "payload": {
+        "password": "admin123"
+      },
+      "expected_status": 422
+    }
+  ]
+}

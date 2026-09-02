@@ -1,0 +1,49 @@
+{
+  "fail_code_cases": [
+    {
+      "name": "添加部门缺部门名称",
+      "overrides": {
+        "deptName": null
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加部门缺显示顺序",
+      "overrides": {
+        "orderNum": null
+      },
+      "expected_code": 601
+    },
+    {
+      "name": "添加部门部门名称重复",
+      "overrides": {
+        "parentId": 101,
+        "deptName": "研发部门"
+      },
+      "expected_code": 500
+    },
+    {
+      "name": "添加部门邮箱格式错误",
+      "overrides": {
+        "email": "abc"
+      },
+      "expected_code": 601
+    }
+  ],
+  "fail_status_cases": [
+    {
+      "name": "添加部门状态传非法值",
+      "overrides": {
+        "status": "abc"
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "添加部门显示顺序传非数字",
+      "overrides": {
+        "orderNum": "abc"
+      },
+      "expected_status": 422
+    }
+  ]
+}

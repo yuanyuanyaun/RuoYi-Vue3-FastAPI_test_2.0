@@ -1,0 +1,195 @@
+{
+  "success_cases": [
+    {
+      "name": "正常分页第1页2条",
+      "params": {
+        "pageNum": 1,
+        "pageSize": 2
+      },
+      "expected_code": 200,
+      "expected_rows": 2
+    },
+    {
+      "name": "不传分页参数用默认值",
+      "params": {},
+      "expected_code": 200
+    },
+    {
+      "name": "无数据页返回空页",
+      "params": {
+        "pageNum": 999,
+        "pageSize": 2
+      },
+      "expected_code": 200,
+      "expected_rows": 0
+    },
+    {
+      "name": "pageSize超大无上限",
+      "params": {
+        "pageNum": 1,
+        "pageSize": 9999
+      },
+      "expected_code": 200
+    },
+    {
+      "name": "按用户名筛选admin",
+      "params": {
+        "userName": "admin"
+      },
+      "expected_code": 200,
+      "expected_total": 1,
+      "expected_user_name": "admin"
+    },
+    {
+      "name": "按手机号筛选admin",
+      "params": {
+        "phonenumber": "15888888888"
+      },
+      "expected_code": 200,
+      "expected_total": 1,
+      "expected_user_name": "admin"
+    },
+    {
+      "name": "按状态筛选正常用户",
+      "params": {
+        "status": "0"
+      },
+      "expected_code": 200,
+      "expected_all_status": "0"
+    },
+    {
+      "name": "按时间范围查询全部",
+      "params": {
+        "beginTime": "2026-08-01",
+        "endTime": "2027-08-31"
+      },
+      "expected_code": 200,
+      "expected_total": 2
+    },
+    {
+      "name": "只传开始时间过滤被跳过",
+      "params": {
+        "beginTime": "2026-08-01"
+      },
+      "expected_code": 200,
+      "expected_total": 2
+    },
+    {
+      "name": "只传结束时间过滤被跳过",
+      "params": {
+        "endTime": "2026-08-31"
+      },
+      "expected_code": 200,
+      "expected_total": 2
+    },
+    {
+      "name": "时间倒挂返回空",
+      "params": {
+        "beginTime": "2026-08-31",
+        "endTime": "2026-08-01"
+      },
+      "expected_code": 200,
+      "expected_total": 0
+    }
+  ],
+  "fail_cases": [
+    {
+      "name": "pageNum为字母",
+      "params": {
+        "pageNum": "abc",
+        "pageSize": 2
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "pageSize为小数",
+      "params": {
+        "pageNum": 1,
+        "pageSize": 1.5
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "pageNum为空字符串",
+      "params": {
+        "pageNum": "",
+        "pageSize": 2
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "pageSize为空字符串",
+      "params": {
+        "pageNum": 1,
+        "pageSize": ""
+      },
+      "expected_status": 422
+    },
+    {
+      "name": "pageNum为特殊符号",
+      "params": {
+        "pageNum": "!@#",
+        "pageSize": 2
+      },
+      "expected_status": 422
+    }
+  ],
+  "defect_cases": [
+    {
+      "name": "pageNum为0应归一化第一页",
+      "params": {
+        "pageNum": 0,
+        "pageSize": 2
+      },
+      "expected_code": 200,
+      "expected_rows": 2,
+      "defect_desc": "pageNum=0时后端返回500，正常应归一化为1并返回第一页数据"
+    },
+    {
+      "name": "pageNum为-1应归一化第一页",
+      "params": {
+        "pageNum": -1,
+        "pageSize": 2
+      },
+      "expected_code": 200,
+      "expected_rows": 2,
+      "defect_desc": "pageNum=-1时后端返回500，正常应归一化为1并返回第一页数据"
+    },
+    {
+      "name": "pageSize为0应用默认值10",
+      "params": {
+        "pageNum": 1,
+        "pageSize": 0
+      },
+      "expected_code": 200,
+      "defect_desc": "pageSize=0时后端返回500，正常应使用默认值10"
+    },
+    {
+      "name": "pageSize为-1应用默认值10",
+      "params": {
+        "pageNum": 1,
+        "pageSize": -1
+      },
+      "expected_code": 200,
+      "defect_desc": "pageSize=-1时后端返回500，正常应使用默认值10"
+    },
+    {
+      "name": "时间参数带时分秒应支持",
+      "params": {
+        "beginTime": "2026-08-25 00:00:00",
+        "endTime": "2026-08-25 23:59:59"
+      },
+      "expected_code": 200,
+      "defect_desc": "时间筛选参数带时分秒时后端返回500，正常应支持完整时间格式"
+    },
+    {
+      "name": "时间参数非标准格式应优雅处理",
+      "params": {
+        "beginTime": "2026-8-1",
+        "endTime": "2026-80-31"
+      },
+      "expected_code": 200,
+      "defect_desc": "时间参数非%Y-%m-%d格式时后端返回500，正常应返回422参数错误或忽略"
+    }
+  ]
+}
