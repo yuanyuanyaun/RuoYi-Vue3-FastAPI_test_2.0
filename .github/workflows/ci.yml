@@ -1,0 +1,34 @@
+name: CI
+
+# 触发条件：向 main 分支 push 或提交 Pull Request 时自动执行
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      # 全量用例依赖本地启动的被测系统（见 README「被测系统」），CI 环境无法起 MySQL/Redis/后端，
+      # 故此处做「用例收集」与「语法检查」两项环境无关的校验：
+      #   - 收集校验：确认测试用例可被 pytest 正常发现（import 无误、无收集错误）
+      #   - 语法校验：确认源码无语法错误
+      - name: 用例收集检查
+        run: pytest --collect-only -q
+
+      - name: Python 语法检查
+        run: python -m compileall utils testcases config

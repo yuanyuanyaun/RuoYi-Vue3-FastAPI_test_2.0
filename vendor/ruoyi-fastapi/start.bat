@@ -142,6 +142,7 @@ echo   看到 "Uvicorn running on http://0.0.0.0:9099" 即启动成功
 echo   验证：浏览器打开 http://127.0.0.1:9099/docs
 echo   登录测试：POST http://127.0.0.1:9099/login  admin / admin123
 echo   停止：在此窗口按 Ctrl+C
+if exist run.log del run.log
 echo ============================================================
 echo.
 powershell -NoProfile -Command "$env:PYTHONIOENCODING='utf-8'; [Console]::OutputEncoding=[Text.Encoding]::UTF8; & '.\venv\Scripts\ruoyi.exe' app run --env=dev 2>&1 | Tee-Object -FilePath '.\run.log'"

@@ -1,8 +1,9 @@
 # RuoYi-Vue3-FastAPI 接口自动化测试项目
 
 基于 **pytest + requests + allure** 的 API 自动化测试工程，对开源后台管理系统 **RuoYi-Vue3-FastAPI v1.10.0** 的 6
-个核心业务模块（登录 / 用户 / 角色 / 岗位 / 菜单 / 部门）进行系统性的接口测试，累计 **297 条用例**（含 **47 条已知缺陷回归用例
-**），覆盖 **52 个接口**（核心模块覆盖率 88%）。
+个核心业务模块（登录 / 用户 / 角色 / 岗位 / 菜单 / 部门）进行系统性的接口测试，并额外设计了 **2 条跨模块端到端流程测试
+（管理端配置链路 + 受限角色权限拦截链路）**，累计 **320 条用例**（含 **49 条已知缺陷回归用例**），覆盖 **52 个接口**（核心模块覆盖率
+88%）。
 
 ---
 
@@ -14,7 +15,8 @@
   FastAPI + SQLAlchemy + MariaDB + Redis
 - **测试目标**：核心系统管理模块的接口功能、参数校验、业务规则与已知缺陷的回归保护
 - **测试方式**：接口请求 + **数据库校验**双闭环；关键断言均经**后端源码与实测**双重验证
-- **数据隔离**：全部使用"自建自删"模式（工厂 + fixture 清理），不污染种子数据，可重复执行
+- **数据隔离**：单模块用例使用"自建自删"模式（工厂 + fixture 清理），不污染种子数据，可重复执行；
+  流程测试数据贯穿链路，由流程自身登记并在末尾按依赖倒序回收（见「测试设计」第 6 节）
 
 ---
 
@@ -32,16 +34,17 @@
 
 ## 被测系统（内置，clone 即用）
 
-被测系统 **RuoYi-Vue3-FastAPI 后端** 源码已内置在 `vendor/ruoyi-fastapi/`（MIT 协议，保留原作者 LICENSE），仓库同时内置前端 `vendor/ruoyi-frontend/`，**clone 后无需另行下载部署**。
+被测系统 **RuoYi-Vue3-FastAPI 后端** 源码已内置在 `vendor/ruoyi-fastapi/`（MIT 协议，保留原作者 LICENSE），仓库同时内置前端
+`vendor/ruoyi-frontend/`，**clone 后无需另行下载部署**。
 
 ### 第一步：准备环境（一次性）
 
-| 软件 | 要求 | 说明 |
-|---|---|---|
-| Python | 3.10+ | 安装时勾选 *Add python.exe to PATH*：https://www.python.org/downloads/ |
-| MySQL | 8.x | 本机 3306 端口，需可用的 root 账号：https://dev.mysql.com/downloads/installer/ |
-| Redis | 任意版本 | 本机 6379 端口（Windows 推荐：https://github.com/tporadowski/redis/releases） |
-| Node.js | 18+ | 仅运行前端需要：https://nodejs.org/ |
+| 软件      | 要求    | 说明                                                                   |
+|---------|-------|----------------------------------------------------------------------|
+| Python  | 3.10+ | 安装时勾选 *Add python.exe to PATH*：https://www.python.org/downloads/     |
+| MySQL   | 8.x   | 本机 3306 端口，需可用的 root 账号：https://dev.mysql.com/downloads/installer/   |
+| Redis   | 任意版本  | 本机 6379 端口（Windows 推荐：https://github.com/tporadowski/redis/releases） |
+| Node.js | 18+   | 仅运行前端需要：https://nodejs.org/                                          |
 
 > 启动脚本会自动检测以上环境，缺失时会明确提示如何安装。
 
@@ -77,14 +80,15 @@ npm run dev
 
 ### 常见问题
 
-| 现象 | 处理 |
-|---|---|
-| 提示 MySQL 连接失败 | root 密码不是 123456，改 start.bat 顶部 `DB_PWD` 后重跑 |
-| 提示 Redis 认证失败 | 在 `vendor/ruoyi-fastapi/.env.dev` 填 `REDIS_PASSWORD` 后重跑 |
-| 依赖安装失败 | 网络问题：`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`（国内镜像） |
-| 想重置系统数据 | 删除 `ruoyi-fastapi` 数据库后重跑 start.bat（自动重建 + 导种子数据） |
+| 现象            | 处理                                                                                       |
+|---------------|------------------------------------------------------------------------------------------|
+| 提示 MySQL 连接失败 | root 密码不是 123456，改 start.bat 顶部 `DB_PWD` 后重跑                                             |
+| 提示 Redis 认证失败 | 在 `vendor/ruoyi-fastapi/.env.dev` 填 `REDIS_PASSWORD` 后重跑                                 |
+| 依赖安装失败        | 网络问题：`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`（国内镜像） |
+| 想重置系统数据       | 删除 `ruoyi-fastapi` 数据库后重跑 start.bat（自动重建 + 导种子数据）                                        |
 
-> 非 Windows 用户：可参照[官方仓库](https://github.com/dromara/RuoYi-Vue3-FastAPI)自行部署被测环境，再通过环境变量 `BASE_URL` / `DB_*` 指向即可。
+> 非 Windows 用户：可参照[官方仓库](https://github.com/dromara/RuoYi-Vue3-FastAPI)自行部署被测环境，再通过环境变量
+`BASE_URL` / `DB_*` 指向即可。
 
 ---
 
@@ -108,10 +112,13 @@ npm run dev
 ├── testcases/                  # 测试用例（按模块分目录）
 │   ├── conftest.py             # 全局 fixtures（client/token/api/mysql/creat_xxx）+ allure 钩子
 │   ├── login/  user/  role/  post/  menu/  dept/
-│   └── *_smoke_test.py         # 各模块冒烟测试（主链路闭环）
-│       *_creat_test.py         # 添加类用例（数据驱动 + 边界 + 缺陷）
-│       *_query_test.py         # 查询类用例（筛选/详情/异常路径）
-│       *_manage_test.py        # 管理类用例（编辑/删除/排序/状态）
+│   │   └── *_smoke_test.py     # 各模块冒烟测试（主链路闭环）
+│   │       *_creat_test.py     # 添加类用例（数据驱动 + 边界 + 缺陷）
+│   │       *_query_test.py     # 查询类用例（筛选/详情/异常路径）
+│   │       *_manage_test.py    # 管理类用例（编辑/删除/排序/状态）
+│   └── flow/                   # 跨模块端到端流程测试（2 条链路，23 条）
+│       ├── admin_config_flow_test.py     # 链路1：管理端配置全流程（建人→菜单→角色→授权→登录→验证→清理）
+│       └── role_permission_flow_test.py  # 链路2：受限角色权限拦截（有权限放行/无权限403/admin对照）
 ├── scripts/
 │   └── reset_mysql.sql         # 数据库重置脚本（CI/环境初始化用）
 └── vendor/
@@ -137,10 +144,12 @@ export BASE_URL=http://127.0.0.1:9099/     # Linux/macOS
 # 数据库连接可整体覆盖：DB_HOST / DB_PORT / DB_USER / DB_PASSWORD / DB_NAME
 
 # 3. 运行测试
-pytest                              # 全量 297 条
+pytest                              # 全量 320 条
 pytest -m smoke                     # 仅冒烟（32 条）
+pytest -m flow                      # 仅流程测试（23 条，跨模块端到端，见「测试设计」第 6 节）
 pytest -m user                      # 指定模块（具体可从config.setting中查看）
 pytest testcases/role/              # 也是指定模块
+pytest testcases/flow/              # 也是指定流程目录
 pytest testcases/menu/menu_manage_test.py -k "delete"   # 指定用例
 
 # 4. 生成 allure 报告（allure 命令行需单独安装：Windows 用 scoop install allure，macOS 用 brew install allure）
@@ -193,6 +202,37 @@ allure serve reports/allure-results
 conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近一次请求/响应 attach 到 allure 报告；xfail
 缺陷用例同样记录缺陷现场，便于缺陷分析。
 
+### 6. 流程测试（跨模块端到端，23 条）
+
+定位：单模块用例以 admin（`*:*:*` 全量权限）身份执行，权限校验恒放行，无法覆盖两类集成行为——
+**无权限请求的拦截**与**多模块配置组合后的真实生效**。流程测试以受限业务身份串联多模块接口，
+专项验证这两类场景。`testcases/flow/` 共 2 条链路、23 条用例：
+
+| 链路         | 文件                             | 条数 | 链路编排                                                                                               |
+|------------|--------------------------------|----|----------------------------------------------------------------------------------------------------|
+| 管理端配置链路    | `admin_config_flow_test.py`    | 13 | 建用户→建部门/岗位→建三级菜单(目录/菜单/按钮)→建角色挂菜单权限→给用户配岗位部门角色→新用户登录→getInfo 验证配置全部生效→退出→按依赖倒序清理                   |
+| 受限角色权限拦截链路 | `role_permission_flow_test.py` | 10 | 最小权限角色(仅挂 1 个菜单权限)→getInfo 验证权限面最小(无 `*:*:*`)→有权限接口放行(200)→无权限接口被业务码 403 拦截→admin 同接口对照(200)→退出→清理 |
+
+#### 管理端配置链路的设计要点
+
+- **配置生效的端到端验证**：链路终点以新用户登录 + getInfo 回查，验证"建的用户/部门/岗位/菜单/角色
+  及其相互绑定"全部真实生效，而不只是创建接口返回成功——覆盖"多模块配置组合后真实生效"这一集成行为。
+
+#### 受限角色权限拦截链路的设计要点
+
+- **最小权限设计**：受限角色仅挂载单一菜单权限（`system:user:list`），权限面最小、
+  允许/拒绝边界清晰，使断言粒度精确到单个权限串。
+- **对照组设计**：同一接口以受限用户与 admin 双身份调用——受限用户被 403 拦截、
+  admin 正常 200，证明拦截源于权限缺失而非接口或环境故障。
+
+#### 两条链路共有的设计要点
+
+- **链路编排与数据传递**：用例按业务步骤定义执行顺序，前置用例创建的资源 ID 经模块级变量登记传递，
+  后置用例接力使用，形成"创建→授权→验证→回收"的完整数据链；用例间存在数据依赖，整类须按序执行。
+
+- **资源生命周期管理**：流程内资源由流程自身创建、登记并统一回收，回收顺序遵循后端业务校验约束
+  （用户→角色→菜单子级先于父级→部门/岗位），保证链路可重复执行、不留数据残留。
+
 ---
 
 ## 已发现的缺陷（节选，均经源码与实测双重确认）
@@ -217,23 +257,31 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 
 ## 覆盖统计（截至当前）
 
-| 模块               | 用例数     | 接口数（已测/总）                      |
-|------------------|---------|--------------------------------|
-| 登录               | 15      | 4 / 6                          |
-| 用户               | 87      | 14 / 18                        |
-| 角色               | 81      | 13 / 14                        |
-| 岗位               | 40      | 6 / 6                          |
-| 菜单               | 42      | 8 / 8                          |
-| 部门               | 32      | 7 / 7                          |
-| **合计**           | **297** | **52 / 59（核心模块 88%）**          |
-| 其中：已知缺陷用例（xfail） | **49**  | 全量执行结果：248 passed + 49 xfailed |
+| 单模块    | 用例数     | 接口数（已测/总）             |
+|--------|---------|-----------------------|
+| 登录     | 15      | 4 / 6                 |
+| 用户     | 87      | 14 / 18               |
+| 角色     | 81      | 13 / 14               |
+| 岗位     | 40      | 6 / 6                 |
+| 菜单     | 42      | 8 / 8                 |
+| 部门     | 32      | 7 / 7                 |
+| **合计** | **298** | **52 / 59（核心模块 88%）** |
+
+| 模块 | 用例数 | 详细说明                  |
+|----|-----|-----------------------|
+| 通过 | 248 | 此数据为在单模块测试时通过的用例      |
+| 流程 | 23  | 全部复用单模块接口，且为全通过，无缺陷   |
+| 缺陷 | 49  | 单模块中已发现的缺陷数量(xfail标记) |
+| 合计 | 320 | 此数据为目前所测用例的总数，未完待续    |
 
 ---
 
 ## 后续计划
 
 - [ ] 字典 / 参数配置模块用例（与现有模块同构，按模板扩展）
-- [ ] GitHub Actions CI（提交后自动跑冒烟）
+- [x] GitHub Actions CI（环境无关校验：用例收集 + 语法检查，见 `.github/workflows/ci.yml`）
+- [x] 跨模块流程测试（2 条链路，见「测试设计」第 6 节）
+- [ ] CI 完整执行（需 docker-compose 启动被测系统 MySQL/Redis/后端）
 - [ ] allure 报告截图归档
 
 ---

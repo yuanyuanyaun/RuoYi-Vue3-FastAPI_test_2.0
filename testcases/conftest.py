@@ -127,8 +127,10 @@ def creat_role(role_api):
 
     yield creat
     for rid in created_ids:
+        # 用 SQL 直连清掉该角色的全部用户关联（含"分配不存在用户"的孤儿关联——
+        # 这类关联 allocated_users 查询不到、cancel_all 也处理不了）
+        execute_sql("delete from sys_user_role where role_id=%s", (rid,))
         role_api.delete(rid)
-
 
 @pytest.fixture
 def creat_post(post_api):

@@ -24,7 +24,6 @@ setting：全局配置模块。
 """
 import os
 
-
 BASE_URL = os.getenv('BASE_URL', 'http://127.0.0.1:9099/')
 TIMEOUT = int(os.getenv('TIMEOUT', 10))
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
@@ -39,5 +38,5 @@ DB_NAME = os.getenv("DB_NAME", "ruoyi-fastapi")
 # pytest 采集阶段不会执行该块；块内 a[-3:] 为历史遗留的调试代码，保留原样
 if __name__ == "__main__":
     print('OK')
-    a="123456"
-    print(a[-3:])
+
+
