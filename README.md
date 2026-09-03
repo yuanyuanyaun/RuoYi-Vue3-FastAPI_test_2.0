@@ -237,6 +237,8 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 
 ## 已发现的缺陷（节选，均经源码与实测双重确认）
 
+> 📋 完整 49 条缺陷清单（含模块分布、实测表现、修复优先级）见 [docs/defects.md](docs/defects.md)
+
 | # | 模块    | 缺陷描述                            | 表现                                                                      |
 |---|-------|---------------------------------|-------------------------------------------------------------------------|
 | 1 | 角色/用户 | 分配接口不校验目标存在性                    | 分配不存在的用户/角色返回成功，`sys_user_role` 插入孤儿关联 (999,2)                          |
@@ -274,6 +276,14 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 | 缺陷 | 49  | 单模块中已发现的缺陷数量(xfail标记) |
 | 合计 | 320 | 此数据为目前所测用例的总数，未完待续    |
 
+### 测试报告截图（Allure）
+
+![Allure 总览](docs/screenshots/allure-overview.png)
+
+![各模块通过情况](docs/screenshots/allure-pass.png)
+
+![缺陷分布（xfail）](docs/screenshots/allure-xfail.png)
+
 ---
 
 ## 后续计划
@@ -282,7 +292,7 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 - [x] GitHub Actions CI（环境无关校验：用例收集 + 语法检查，见 `.github/workflows/ci.yml`）
 - [x] 跨模块流程测试（2 条链路，见「测试设计」第 6 节）
 - [ ] CI 完整执行（需 docker-compose 启动被测系统 MySQL/Redis/后端）
-- [ ] allure 报告截图归档
+- [x] allure 报告截图归档（见「覆盖统计」之报告截图）
 
 ---
 
