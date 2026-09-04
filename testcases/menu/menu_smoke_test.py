@@ -309,8 +309,8 @@ class TestMenuSmoke:
 
         # 4) 列表复查闭环：按编辑后的名称过滤，三级节点均不应再出现在列表数据中
         for name in (f"update_{TestMenuSmoke.btn_name}",
-                     f"update_{TestMenuSmoke.menu_name}",
-                     f"update_{TestMenuSmoke.dir_name}"):
+                     TestMenuSmoke.menu_name,
+                     TestMenuSmoke.dir_name):
             rows = menu_api.list(menuName=name).json()["data"]
             assert not [row for row in rows if row["menuName"] == name]
         # 数据库复查：mysql 夹具统计三个 menuId 在 sys_menu 中的记录数为 0，

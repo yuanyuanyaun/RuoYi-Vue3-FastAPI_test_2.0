@@ -21,7 +21,6 @@
 
 import pytest
 import allure
-from testcases.conftest import creat_role
 from utils.function import auth
 
 

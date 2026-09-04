@@ -18,6 +18,7 @@
 
 import time
 import pytest
+import requests
 import allure
 
 
@@ -150,9 +151,9 @@ class TestPostDelete:
         """已知缺陷验证：删除 ID 传非数字值时后端未做格式校验，service 层 int() 转换失败返回 500 并泄漏，期望 422 而失败，标记 xfail。"""
         # 缺陷触发点：删除接口路径参数为 str（支持逗号批量），"abc" 可进入 service 层，
         # int("abc") 抛 ValueError 返回 500 并泄漏内部细节；正常应像详情接口一样由参数层返回 422
-        resp = post_api.delete("abc")
-        assert resp.json()["code"] == 422
-        assert resp.json()["success"] is False
+        with pytest.raises(requests.exceptions.HTTPError) as e:
+            post_api.delete("abc")
+        assert e.value.response.status_code == 422
 
 
 @pytest.mark.post

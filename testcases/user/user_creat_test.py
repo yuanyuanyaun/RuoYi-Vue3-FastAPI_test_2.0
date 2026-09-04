@@ -135,5 +135,5 @@ class TestUserCreat:
         assert resp.json()["code"] == 601
         assert resp.json()["success"] == False
         # DB 校验：插入应整体失败，sys_user 中不存在该 userId 的记录
-        row = mysql["one"]("select count as c from sys_user where user_id = %s", (ID,))
+        row = mysql["one"]("select count(*) as c from sys_user where user_id = %s", (ID,))
         assert row["c"] == 0

@@ -90,7 +90,7 @@ class TestPostCreat:
         # 原因串由数据中的 defect_desc 动态生成
         # 缺陷用例直接以原始 overrides 作为请求体（不叠加工厂函数默认值），
         # 保证「缺字段」场景真实复现；请求头由 auth(token) 生成携带登录凭证
-        resp = client.put(
+        resp = client.post(
             "system/post",
             headers=auth(token),
             json=case["overrides"]

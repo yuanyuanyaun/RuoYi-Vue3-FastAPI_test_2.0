@@ -145,7 +145,7 @@ class TestRolePermissionFlow:
 
     @allure.title("无权限接口：调用角色列表被业务码403拦截")
     def test_call_forbidden_api(self, client):
-        """权限拦截核心用例：受限用户缺 system:role:index → GET /system/role/index 被拦。 """
+        """权限拦截核心用例：受限用户缺 system:role:list → GET /system/role/list 被拦。 """
         global login_token
         resp = client.get("system/role/list", headers=auth(login_token))
         # 断言拦截契约：业务 code 403 + 成功标识为 False + 提示「该用户无此接口权限」

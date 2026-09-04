@@ -33,8 +33,8 @@ class TestRoleSmoke:
     # 类级共享状态：role_id 由添加用例按权限字符查回后登记，供链路内后续用例复用；
     # 名称/权限字符以秒级时间戳拼接，保证每次运行生成的测试数据全局唯一，避免与既有数据冲突
     role_id = None
-    name = f"test_role{time.strftime('%Y%m%d%H%M%S')}"
-    key = f"test_key{time.strftime('%Y%m%d%H%M%S')}"
+    name = f"test_role{int(time.time() * 1000)}"
+    key = f"test_key{int(time.time() * 1000)}"
 
     @allure.story("获取角色分页列表接口")
     @allure.title("默认条件获取角色列表成功")

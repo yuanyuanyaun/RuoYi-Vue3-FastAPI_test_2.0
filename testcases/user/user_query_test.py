@@ -5,7 +5,7 @@
     GET /system/user/{id}    获取用户详情接口：返回指定用户完整信息，或岗位+角色下拉列表
 
 测试策略：
-    数据驱动：data/user/user_query_lis_.data.json 提供 success_cases / fail_cases /
+    数据驱动：data/user/user_query_list_data.json 提供 success_cases / fail_cases /
     defect_cases 三类场景数据。
     正向 / 反向 / 边界 / 已知缺陷(xfail) 场景全覆盖：
     - 成功筛选：userName/status/deptId/分页等条件组合，按数据文件的期望字段选择性断言
@@ -24,7 +24,7 @@ import json
 import requests
 
 # 模块导入时一次性加载查询场景数据（成功/HTTP 失败/缺陷三类），避免每个用例重复读文件
-with open('data/user/user_query_lis_.data.json', 'r', encoding='utf-8') as f:
+with open('data/user/user_query_list_data.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 

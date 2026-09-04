@@ -59,18 +59,18 @@
       "expected_code": 601
     },
     {
-            "name": "用户名含脚本",
+      "name": "用户名含脚本",
       "payload": {
-        "userName":"<script>x</script>test",
+        "userName": "<script>x</script>test",
         "nickName": "用户名约束",
         "password": "Test@123456"
       },
       "expected_code": 601
     },
-        {
-            "name": "昵称含脚本",
+    {
+      "name": "昵称含脚本",
       "payload": {
-        "userName":"test",
+        "userName": "test",
         "nickName": "<script>y</script>test",
         "password": "Test@123456"
       },
@@ -131,7 +131,7 @@
       },
       "expected_code": 601
     },
-        {
+    {
       "name": "重复邮箱号",
       "payload": {
         "userName": "fail_emailup",
