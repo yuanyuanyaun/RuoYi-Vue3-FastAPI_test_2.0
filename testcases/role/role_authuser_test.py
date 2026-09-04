@@ -185,7 +185,7 @@ class TestAssignUser:
         role_api.assign_users(ID, "2")
         resp = role_api.assign_users(ID, "2")
         assert resp.json()["code"] == 200
-        names = [r["userName"] for r in role_api.allocated_users(2).json()["rows"]]
+        names = [r["userName"] for r in role_api.allocated_users(ID).json()["rows"]]
         assert "niangao" in names
 
     @pytest.mark.xfail(reason="分配不存在的用户本应拒绝却成功分配，"
@@ -220,7 +220,7 @@ class TestAssignUser:
         # DB 校验：admin（user_id=1）被分配到自建角色 ID（断言集合不同 → xfail）
         row2 = mysql["all"]("select role_id as r from sys_user_role where user_id = 1")
         assert {row["r"] for row in row2} != {1, ID}
-        names = [r["userName"] for r in role_api.allocated_users(2).json()["rows"]]
+        names = [r["userName"] for r in role_api.allocated_users(ID).json()["rows"]]
         assert "admin" not in names
 
     @pytest.mark.xfail(
