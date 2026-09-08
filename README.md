@@ -11,7 +11,7 @@
 
 本项目是一个面向 **RuoYi-Vue3-FastAPI** 的接口自动化测试实践：
 
-- **被测系统**：[dromara/RuoYi-Vue3-FastAPI](https://github.com/dromara/RuoYi-Vue3-FastAPI) v1.10.0（MIT 协议开源），后端
+- **被测系统**：[insistence/RuoYi-Vue3-FastAPI](https://github.com/insistence/RuoYi-Vue3-FastAPI) v1.10.0（若依 RuoYi 的 FastAPI 移植版，MIT 协议开源），后端
   FastAPI + SQLAlchemy + MariaDB + Redis
 - **测试目标**：核心系统管理模块的接口功能、参数校验、业务规则与已知缺陷的回归保护
 - **测试方式**：接口请求 + **数据库校验**双闭环；关键断言均经**后端源码与实测**双重验证
@@ -87,7 +87,7 @@ npm run dev
 | 依赖安装失败        | 网络问题：`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`（国内镜像） |
 | 想重置系统数据       | 删除 `ruoyi-fastapi` 数据库后重跑 start.bat（自动重建 + 导种子数据）                                        |
 
-> 非 Windows 用户：可参照[官方仓库](https://github.com/dromara/RuoYi-Vue3-FastAPI)自行部署被测环境，再通过环境变量
+> 非 Windows 用户：可参照[官方仓库](https://github.com/insistence/RuoYi-Vue3-FastAPI)自行部署被测环境，再通过环境变量
 `BASE_URL` / `DB_*` 指向即可。
 
 ---
@@ -255,6 +255,8 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 
 > xfail 用例统一标注「已知缺陷 + 前端已约束」，后端修复后会自动 XPASS 提醒，作为回归保护。
 
+> 以上缺陷均可现场用 pytest 复现：命中缺陷的用例记录为 xfailed，并自动把最近一次请求/响应附加到 Allure 报告（见 conftest 的 `pytest_runtest_makereport` 钩子），便于定位。
+
 ---
 
 ## 覆盖统计（截至当前）
@@ -267,7 +269,7 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 | 岗位     | 40      | 6 / 6                 |
 | 菜单     | 42      | 8 / 8                 |
 | 部门     | 32      | 7 / 7                 |
-| **合计** | **298** | **52 / 59（核心模块 88%）** |
+| **合计** | **297** | **52 / 59（核心模块 88%）** |
 
 | 模块 | 用例数 | 详细说明                  |
 |----|-----|-----------------------|
