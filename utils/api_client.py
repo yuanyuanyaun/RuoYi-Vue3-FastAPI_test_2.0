@@ -44,7 +44,10 @@ class APIClient:
         kwargs.setdefault("timeout", self.timeout)  # 未显式指定超时时兜底全局默认值，避免请求无界挂起
         logger.info(f"{method} {url}")
         try:
+            # TCP长连接，在Windows中存在缺陷
             resp = self.session.request(method, url, **kwargs)
+            # 自建短连接，每条用例绝对干净但会增加TCP握手次数，从而影响效率（本地部署几乎无影响）
+            # resp = requests.request(method, url, **kwargs)
             last_request = f"{method} {url}"
             last_response = resp
             resp.raise_for_status()  # 4xx/5xx 状态码自动抛出 HTTPError，统一交由下方异常分支记录
