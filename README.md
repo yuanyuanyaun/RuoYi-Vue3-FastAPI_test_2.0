@@ -11,7 +11,8 @@
 
 本项目是一个面向 **RuoYi-Vue3-FastAPI** 的接口自动化测试实践：
 
-- **被测系统**：[insistence/RuoYi-Vue3-FastAPI](https://github.com/insistence/RuoYi-Vue3-FastAPI) v1.10.0（若依 RuoYi 的 FastAPI 移植版，MIT 协议开源），后端
+- **被测系统**：[insistence/RuoYi-Vue3-FastAPI](https://github.com/insistence/RuoYi-Vue3-FastAPI) v1.10.0（若依 RuoYi 的
+  FastAPI 移植版，MIT 协议开源），后端
   FastAPI + SQLAlchemy + MariaDB + Redis
 - **测试目标**：核心系统管理模块的接口功能、参数校验、业务规则与已知缺陷的回归保护
 - **测试方式**：接口请求 + **数据库校验**双闭环；关键断言均经**后端源码与实测**双重验证
@@ -253,9 +254,8 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 > ⚠️ 上表缺陷中，除「备注字段无长度校验」外，其余均已被前端约束拦截，真实用户无法触发；备注超长无前端约束（如粘贴超长文本），且返回
 > 500 泄漏 SQL/表结构，风险最高。
 
-> xfail 用例统一标注「已知缺陷 + 前端已约束」，后端修复后会自动 XPASS 提醒，作为回归保护。
-
-> 以上缺陷均可现场用 pytest 复现：命中缺陷的用例记录为 xfailed，并自动把最近一次请求/响应附加到 Allure 报告（见 conftest 的 `pytest_runtest_makereport` 钩子），便于定位。
+> 以上缺陷均可现场用 pytest 复现：命中缺陷均用xfail装饰标注「已知缺陷 + 前端已约束」，后端修复后会自动 XPASS
+> 提醒，作为回归保护。，并自动把最近一次请求/响应附加到 Allure 报告（见 conftest 的 `pytest_runtest_makereport` 钩子），便于定位。
 
 ---
 
@@ -285,16 +285,6 @@ conftest 的 `pytest_runtest_makereport` 钩子：用例失败时自动把最近
 ![各模块通过情况](docs/screenshots/allure-pass.png)
 
 ![缺陷分布（xfail）](docs/screenshots/allure-xfail.png)
-
----
-
-## 后续计划
-
-- [ ] 字典 / 参数配置模块用例（与现有模块同构，按模板扩展）
-- [x] GitHub Actions CI（环境无关校验：用例收集 + 语法检查，见 `.github/workflows/ci.yml`）
-- [x] 跨模块流程测试（2 条链路，见「测试设计」第 6 节）
-- [ ] CI 完整执行（需 docker-compose 启动被测系统 MySQL/Redis/后端）
-- [x] allure 报告截图归档（见「覆盖统计」之报告截图）
 
 ---
 
